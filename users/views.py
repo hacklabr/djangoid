@@ -13,19 +13,20 @@ from django.views.decorators.csrf import csrf_exempt
 
 def useryadis(request, uid):
 	uid = User.objects.get(username = uid)
-	res = render_to_response("users/yadis.xrds", {"server_url": settings.BASE_URL[:-1] + urlreverse("server.views.endpoint"), "uid": uid})
+	res = render_to_response("yadis.xrds", {"server_url": settings.BASE_URL[:-1] + urlreverse("server.views.endpoint"), "uid": uid})
 	mimetype = "application/xrds+xml; charset=%s" % settings.DEFAULT_CHARSET
 	res["Content-Type"] = mimetype
 	return res
 
 def userpage_short(request, uid):
+
 	uid = User.objects.get(username = uid)
 	#Check whether this is a YADIS request
-	if checkYadisRequest(request):
-		return useryadis(request, uid.username)
+#	if checkYadisRequest(request):
+#		return useryadis(request, uid.username)
 
 	user = DjangoidUser.objects.get(djangouser = uid)
-	user.attri\butes = user.get_attributes(True)
+	user.attributes = user.get_attributes(True)
 	mid = microid(user.get_user_page(), user.get_user_page())
 	res = render_to_response("users/userpage.html", {"server_url": settings.BASE_URL[:-1] + urlreverse("server.views.endpoint"), "user": user, "microid": mid})
 	res["X-XRDS-Location"] = user.get_yadis_uri()
@@ -33,19 +34,19 @@ def userpage_short(request, uid):
 
 @login_required
 def userpage(request, uid):
-	if request.user.username == uid:
-		uid = User.objects.get(username = uid)
-		user = DjangoidUser.objects.get(djangouser = uid)
-		user.attributes = user.get_attributes(True)
-		mid = microid(user.get_user_page(), user.get_user_page())
-		res = render_to_response("users/userpage.html", {"server_url": settings.BASE_URL[:-1] + urlreverse("server.views.endpoint"), "user": user, "microid": mid})
-		res["X-XRDS-Location"] = user.get_yadis_uri()
-		return res
-	else: 
-		#return only public data, but as a demo it still works
-		return HttpResponseForbidden()
+#	if request.user.username == uid:
+	uid = User.objects.get(username = uid)
+	user = DjangoidUser.objects.get(djangouser = uid)
+	user.attributes = user.get_attributes(True)
+	mid = microid(user.get_user_page(), user.get_user_page())
+	res = render_to_response("users/userpage.html", {"server_url": settings.BASE_URL[:-1] + urlreverse("server.views.endpoint"), "user": user, "microid": mid})
+	res["X-XRDS-Location"] = user.get_yadis_uri()
+	return res
+#	else: 
+#		#return only public data, but as a demo it still works
+#		return HttpResponseForbidden()
 
-@login_required
+#@login_required
 @csrf_exempt
 def accept(request):
 	r = convertToOpenIDRequest(request)

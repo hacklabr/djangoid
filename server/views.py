@@ -27,7 +27,8 @@ def getDjangoidUserFromIdentity(identity):
                 c = ClaimedUri(user = user, uri = user.get_user_page())
                 c.save()
                 return user
-@csrf_exempt
+
+#@csrf_exempt
 def endpoint(request):
         #If this is (most likely) a YADIS request, handle it using the YADIS view function
         if checkYadisRequest(request):
@@ -48,9 +49,11 @@ def endpoint(request):
                 #username), redirect to the login page. This is part of the "users" application.
                 #Make sure we pass all OpenID related information in the URL
                 if not request.user or request.user.is_authenticated() == False:
-                        return redirect_to_login(r.encodeToURL("/".join([""] + settings.BASE_URL.split("/")[3:])) + "&tr=" + urllib.quote(r.trust_root), login_url = settings.BASE_URL + "login/")
+                    if not r.claimed_id:
+                        r.claimed_id = r.identity
+                    return redirect_to_login(r.encodeToURL("/".join([""] + settings.BASE_URL.split("/")[3:])) + "&tr=" + urllib.quote(r.trust_root), login_url = settings.BASE_URL + "login/")
                 if not request.user == user.djangouser:
-                        raise Exception, "Logged in as " + request.user.username + " while expecting " + user.djangouser
+                    raise Exception, "Logged in as " + request.user.username + " while expecting " + user.djangouser
 
                 #Is the user authenticated, and does he trust this trust_root?
                 if user.authenticate(r.trust_root): #user logged in (using r.identity and r.trust_root)

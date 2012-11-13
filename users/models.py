@@ -38,6 +38,10 @@ class DjangoidUser(models.Model):
 	def get_user_page(self):
 		#Strip of last / from BASE_URL
 		return settings.BASE_URL[:-1] + urlreverse("users.views.userpage", kwargs = {"uid": str(self.djangouser)})
+	
+	def get_short_user_page(self):
+		#Strip of last / from BASE_URL
+		return settings.BASE_URL[:-1] + urlreverse("users.views.userpage_short", kwargs = {"uid": str(self.djangouser)})
 
 	def get_yadis_uri(self):
 		return settings.BASE_URL[:-1] + urlreverse("users.views.useryadis", kwargs = {"uid": str(self.djangouser)})

@@ -7,9 +7,9 @@ class OidStoreNonce(models.Model):
         expires = models.IntegerField()
 
 class OidStoreAssociation(models.Model):
-        server_url = models.TextField()
+        server_url = models.URLField(max_length = 255)
         handle = models.CharField(max_length = 255)
-        secret = models.TextField()
+        secret = models.TextField(max_length = 255)
         issued = models.IntegerField()
         lifetime = models.IntegerField()
         assoc_type = models.CharField(max_length = 64)
@@ -20,4 +20,4 @@ class OidStoreAssociation(models.Model):
 
 class OidStoreSetting(models.Model):
         setting = models.CharField(max_length = 128, primary_key = True)
-        value = models.TextField()
+        value = models.TextField(max_length = 255)
